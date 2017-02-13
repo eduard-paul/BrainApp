@@ -5,6 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 
+using Auxiliary.Graphics;
+using Auxiliary.VectorMath;
+
+// для работы с библиотекой OpenGL 
+using Tao.OpenGl;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Forms;
 
 namespace BrainApp
 {
@@ -60,8 +68,8 @@ namespace BrainApp
         }
         public SectModel()
         {
-            sect.xy_start = -Math.PI;
-            sect.xy_end = Math.PI;
+            sect.xy_start = 0;
+            sect.xy_end = 2 * Math.PI;
             sect.xz_start = 0;
             sect.xz_end = Math.PI;
         }
@@ -342,6 +350,135 @@ namespace BrainApp
                     }
                 }
             });
+        }
+
+
+        ShaderProgram renderProgram = null;
+        public void rayTracingGPU(ref string log, ref short[] _space, ref int[] _size, ref double[] _spacing,
+            double startX, double startY, double startZ, int rayNum_xy = 200, int rayNum_xz = 100)
+        {
+            if (!InitShaders(ref log))
+            {
+                MessageBox.Show("Ошибка! Не удалось инициализировать шейдерную программу.");
+                return;
+            }
+
+            if (!LoadGLTextures())
+            {
+                MessageBox.Show("Ошибка! Не удалось загрузить текстуры.");
+                return;
+            }
+
+            // установка порта вывода в соответствии с размерами элемента anT 
+            Gl.glViewport(0, 0, rayNum_xy, rayNum_xz);
+
+            // настройка проекции 
+            Gl.glMatrixMode(Gl.GL_PROJECTION);
+            Gl.glLoadIdentity();
+            Gl.glMatrixMode(Gl.GL_MODELVIEW);
+            Gl.glLoadIdentity();
+
+            // Очищаем буфер цвета и буфер глубины
+            Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+
+            // Устанавливаем программный объект в качестве текущего состояния OpenGL
+            renderProgram.Bind();
+
+            Gl.glBegin(Gl.GL_QUADS);
+            Gl.glVertex3f(-1.0f, -1f, 0.0f);
+            Gl.glVertex3f(-1.0f, 1.0f, 0.0f);
+            Gl.glVertex3f(0.0f, 1.0f, 0.0f);
+            Gl.glVertex3f(0.0f, -1.0f, 0.0f);
+            Gl.glEnd();
+
+            // Возвращаемся к стандартной функциональности OpenGL			
+            renderProgram.Unbind();
+        }
+
+        private bool InitShaders(ref string log)
+        {
+            // Результат загрузки шейдеров
+            bool result = true;
+
+            // Загружаем шейдеры
+            {
+                // Создаем пустой программный объект
+                renderProgram = new ShaderProgram();
+
+                // Загружаем фрагментный шейдер
+                if (!renderProgram.SetFragmentShaderFile(new string[] { "..\\..\\..\\Shaders\\RenderShader.fs" }))
+                {
+                    result = false;
+                }
+
+                // Компонуем программный объект
+                if (!renderProgram.LinkProgram())
+                {
+                    result = false;
+                }
+
+                // Отображаем информационный журнал программного объекта
+                log += "================ RENDER PROGRAM LOG ================\n\n";
+                log += renderProgram.Log;
+            }
+
+            // Записываем в переменные шейдеров значения по умолчанию			
+            if (!SetShaderData())
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
+        private int[] texture = new int[1];
+        private bool LoadGLTextures()
+        {
+            bool status = false;                                                // Status Indicator
+            Bitmap[] textureImage = new Bitmap[1];                              // Create Storage Space For The Texture
+
+            textureImage[0] = new Bitmap("img.png");                // Load The Bitmap
+            // Check For Errors, If Bitmap's Not Found, Quit
+            if (textureImage[0] != null)
+            {
+                status = true;                                                  // Set The Status To True
+
+                Gl.glGenTextures(1, texture);                            // Create The Texture
+
+                textureImage[0].RotateFlip(RotateFlipType.RotateNoneFlipY);     // Flip The Bitmap Along The Y-Axis
+                // Rectangle For Locking The Bitmap In Memory
+                Rectangle rectangle = new Rectangle(0, 0, textureImage[0].Width, textureImage[0].Height);
+                // Get The Bitmap's Pixel Data From The Locked Bitmap
+                BitmapData bitmapData = textureImage[0].LockBits(rectangle, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+                // Typical Texture Generation Using Data From The Bitmap
+                Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture[0]);
+                Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB8, textureImage[0].Width, textureImage[0].Height, 0, Gl.GL_BGR, Gl.GL_UNSIGNED_BYTE, bitmapData.Scan0);
+                Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
+                Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+
+                if (textureImage[0] != null)
+                {                                   // If Texture Exists
+                    textureImage[0].UnlockBits(bitmapData);                     // Unlock The Pixel Data From Memory
+                    textureImage[0].Dispose();                                  // Dispose The Bitmap
+                }
+            }
+
+            return status;                                                      // Return The Status
+        }
+
+        private bool SetShaderData()
+        {
+            // Устанавливаем программный объект в качестве состояния OpenGL
+            renderProgram.Bind();
+
+            renderProgram.SetUniformVector("Size", new Vector3D((float)size[0], (float)size[1], (float)size[2]));
+            renderProgram.SetUniformVector("Spacing", new Vector3D((float)spacing[0], (float)spacing[1], (float)spacing[2]));
+
+            // Возвращаемся к стандартной функциональности OpenGL
+            renderProgram.Unbind();
+
+            return true;
         }
     }
 }

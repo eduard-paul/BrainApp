@@ -92,6 +92,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Auxiliary Graphics Library">
+      <HintPath>dep\Auxiliary Graphics Library.dll</HintPath>
+    </Reference>
+    <Reference Include="Auxiliary Math Library">
+      <HintPath>dep\Auxiliary Math Library.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -155,6 +161,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="RenderShader.fs" />
+    <None Include="Shaders\RenderShader.fs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
