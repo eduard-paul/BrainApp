@@ -392,7 +392,7 @@ namespace BrainApp
             Gl.glEnd();
 
             // Возвращаемся к стандартной функциональности OpenGL			
-            renderProgram.Unbind();
+            //renderProgram.Unbind();
         }
 
         private bool InitShaders(ref string log)
@@ -451,11 +451,22 @@ namespace BrainApp
                 // Get The Bitmap's Pixel Data From The Locked Bitmap
                 BitmapData bitmapData = textureImage[0].LockBits(rectangle, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
+
+                Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, texture[0]);
+                Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, Gl.GL_DEPTH_COMPONENT, size[0], size[1], size[2], 0, Gl.GL_DEPTH_COMPONENT, Gl.GL_SHORT, space);
+                Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
+                Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+
+                // Gl.glBindTexture(Gl.GL_TEXTURE_3D, texture[0]);
+                // Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, Gl.GL_DEPTH_COMPONENT, size[0], size[1], size[2], 0, Gl.GL_DEPTH_COMPONENT, Gl.GL_SHORT, space);
+                // Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
+                // Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+
                 // Typical Texture Generation Using Data From The Bitmap
-                Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture[0]);
-                Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB8, textureImage[0].Width, textureImage[0].Height, 0, Gl.GL_BGR, Gl.GL_UNSIGNED_BYTE, bitmapData.Scan0);
-                Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
-                Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+                // Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture[0]);
+                // Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB8, textureImage[0].Width, textureImage[0].Height, 0, Gl.GL_BGR, Gl.GL_UNSIGNED_BYTE, bitmapData.Scan0);
+                // Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
+                // Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
 
                 if (textureImage[0] != null)
                 {                                   // If Texture Exists
