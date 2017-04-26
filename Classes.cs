@@ -357,13 +357,20 @@ namespace BrainApp
         public void rayTracingGPU(ref string log, ref short[] _space, ref int[] _size, ref double[] _spacing,
             double startX, double startY, double startZ, int rayNum_xy = 200, int rayNum_xz = 100)
         {
+             rayNum_xy = 10;
+             rayNum_xz = 10;
+
+            space = _space;
+            size = _size;
+            spacing = _spacing;
+
             if (!InitShaders(ref log))
             {
                 MessageBox.Show("Ошибка! Не удалось инициализировать шейдерную программу.");
                 return;
             }
 
-            if (!LoadGLTextures())
+            if (!LoadGLTextures(rayNum_xy, rayNum_xz))
             {
                 MessageBox.Show("Ошибка! Не удалось загрузить текстуры.");
                 return;
@@ -387,12 +394,25 @@ namespace BrainApp
             Gl.glBegin(Gl.GL_QUADS);
             Gl.glVertex3f(-1.0f, -1f, 0.0f);
             Gl.glVertex3f(-1.0f, 1.0f, 0.0f);
-            Gl.glVertex3f(0.0f, 1.0f, 0.0f);
-            Gl.glVertex3f(0.0f, -1.0f, 0.0f);
+            Gl.glVertex3f(1.0f, 1.0f, 0.0f);
+            Gl.glVertex3f(1.0f, -1.0f, 0.0f);
             Gl.glEnd();
 
-            // Возвращаемся к стандартной функциональности OpenGL			
-            //renderProgram.Unbind();
+            var pixels = new float[3 * rayNum_xy * rayNum_xz];
+            Gl.glGetTexImage(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB, Gl.GL_FLOAT, pixels);
+
+            for (int i = 0; i < rayNum_xy; i++)
+            {
+                for (int j = 0; j < rayNum_xz; j++)
+                {
+                    System.Console.Write("(" + pixels[i * rayNum_xz * 3 + j * 3 + 0] + ", "
+                        + pixels[i * rayNum_xz * 3 + j * 3 + 1] + ", "
+                        + pixels[i * rayNum_xz * 3 + j * 3 + 2] + ") ");
+                }
+                System.Console.WriteLine();
+            }
+
+            finilize();
         }
 
         private bool InitShaders(ref string log)
@@ -432,50 +452,48 @@ namespace BrainApp
         }
 
         private int[] texture = new int[1];
-        private bool LoadGLTextures()
+        private bool LoadGLTextures(int rayNum_xy, int rayNum_xz)
         {
-            bool status = false;                                                // Status Indicator
-            Bitmap[] textureImage = new Bitmap[1];                              // Create Storage Space For The Texture
+            Gl.glGenTextures(1, texture);                            // Create The Texture
 
-            textureImage[0] = new Bitmap("img.png");                // Load The Bitmap
-            // Check For Errors, If Bitmap's Not Found, Quit
-            if (textureImage[0] != null)
+            Gl.glBindTexture(Gl.GL_TEXTURE_3D, texture[0]);
+            Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, Gl.GL_DEPTH_COMPONENT, size[0], size[1], size[2], 0, Gl.GL_DEPTH_COMPONENT, Gl.GL_SHORT, space);
+            Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
+            Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+
+            /*
+             * Here we are starting to initiate rendering to texture 
+             */
+
+            int[] FramebufferName = new int[1];
+            Gl.glGenFramebuffersEXT(1, FramebufferName);
+            Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, FramebufferName[0]);
+
+            int[] renderedTexture = new int[1];
+            Gl.glGenTextures(1, renderedTexture);
+            Gl.glBindTexture(Gl.GL_TEXTURE_2D, renderedTexture[0]);
+            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB_FLOAT32_ATI, rayNum_xy, rayNum_xz, 0, Gl.GL_RGB, Gl.GL_FLOAT, 0);
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_NEAREST);
+            Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_NEAREST);
+
+            Gl.glFramebufferTexture2DEXT(Gl.GL_FRAMEBUFFER_EXT, Gl.GL_COLOR_ATTACHMENT0_EXT, Gl.GL_TEXTURE_2D, renderedTexture[0], 0);
+            int[] DrawBuffers = { Gl.GL_COLOR_ATTACHMENT0_EXT };
+            Gl.glDrawBuffers(1, DrawBuffers);
+            if (Gl.glCheckFramebufferStatusEXT(Gl.GL_FRAMEBUFFER_EXT) != Gl.GL_FRAMEBUFFER_COMPLETE_EXT)
             {
-                status = true;                                                  // Set The Status To True
-
-                Gl.glGenTextures(1, texture);                            // Create The Texture
-
-                textureImage[0].RotateFlip(RotateFlipType.RotateNoneFlipY);     // Flip The Bitmap Along The Y-Axis
-                // Rectangle For Locking The Bitmap In Memory
-                Rectangle rectangle = new Rectangle(0, 0, textureImage[0].Width, textureImage[0].Height);
-                // Get The Bitmap's Pixel Data From The Locked Bitmap
-                BitmapData bitmapData = textureImage[0].LockBits(rectangle, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-
-
-                Gl.glBindTexture(Gl.GL_TEXTURE_CUBE_MAP, texture[0]);
-                Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, Gl.GL_DEPTH_COMPONENT, size[0], size[1], size[2], 0, Gl.GL_DEPTH_COMPONENT, Gl.GL_SHORT, space);
-                Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
-                Gl.glTexParameteri(Gl.GL_TEXTURE_CUBE_MAP, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
-
-                // Gl.glBindTexture(Gl.GL_TEXTURE_3D, texture[0]);
-                // Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, Gl.GL_DEPTH_COMPONENT, size[0], size[1], size[2], 0, Gl.GL_DEPTH_COMPONENT, Gl.GL_SHORT, space);
-                // Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
-                // Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
-
-                // Typical Texture Generation Using Data From The Bitmap
-                // Gl.glBindTexture(Gl.GL_TEXTURE_2D, texture[0]);
-                // Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB8, textureImage[0].Width, textureImage[0].Height, 0, Gl.GL_BGR, Gl.GL_UNSIGNED_BYTE, bitmapData.Scan0);
-                // Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
-                // Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
-
-                if (textureImage[0] != null)
-                {                                   // If Texture Exists
-                    textureImage[0].UnlockBits(bitmapData);                     // Unlock The Pixel Data From Memory
-                    textureImage[0].Dispose();                                  // Dispose The Bitmap
-                }
+                return false;
             }
+            Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, FramebufferName[0]);
 
-            return status;                                                      // Return The Status
+            return true;
+        }
+
+        private void finilize()
+        {
+            // Возвращаемся к стандартной функциональности OpenGL			
+            renderProgram.Unbind();
+
+            Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, 0);
         }
 
         private bool SetShaderData()

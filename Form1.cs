@@ -261,9 +261,10 @@ namespace BrainApp
                     (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
 
                 string log = "";
+                log += "OpenGL version: " + Gl.glGetString(Gl.GL_VERSION) + "\r\n";
                 model.rayTracingGPU(ref log, ref space, ref size, ref spacing, p.x, p.y, p.z,
                     (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
-                tbLog.Text += log;
+                tbLog.Text += log.Replace("\n", "\r\n");
             }
             InitProjection();
 
