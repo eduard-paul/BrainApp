@@ -24,6 +24,12 @@ namespace BrainApp
 {
     public partial class Form1 : Form
     {
+        enum Mode
+        {
+            Model,
+            Chart,
+        }
+
         short[] space;
         Model model;
         int[] size = new int[3];
@@ -52,6 +58,19 @@ namespace BrainApp
             // отчитка окна 
             Gl.glClearColor(255, 255, 255, 1);
 
+            InitProjection();
+
+            // настройка параметров OpenGL для визуализации 
+            Gl.glEnable(Gl.GL_DEPTH_TEST);
+            Gl.glClearDepth(1.0f);
+
+            Gl.glEnable(Gl.GL_LIGHTING); // здесь включается расчет освещения 
+            Gl.glLightModelf(Gl.GL_LIGHT_MODEL_TWO_SIDE, Gl.GL_TRUE); // делаем так, чтобы освещались обе стороны полигона
+            Gl.glEnable(Gl.GL_NORMALIZE); //делам нормали одинаковой величины во избежание 
+        }
+
+        void InitProjection()
+        {
             // установка порта вывода в соответствии с размерами элемента anT 
             Gl.glViewport(0, 0, AnT.Width, AnT.Height);
 
@@ -61,14 +80,6 @@ namespace BrainApp
             Glu.gluPerspective(45, (float)AnT.Width / (float)AnT.Height, 0.1, 200);
             Gl.glMatrixMode(Gl.GL_MODELVIEW);
             Gl.glLoadIdentity();
-
-            // настройка параметров OpenGL для визуализации 
-            Gl.glEnable(Gl.GL_DEPTH_TEST);
-            Gl.glClearDepth(1.0f);
-
-            Gl.glEnable(Gl.GL_LIGHTING); // здесь включается расчет освещения 
-            Gl.glLightModelf(Gl.GL_LIGHT_MODEL_TWO_SIDE, Gl.GL_TRUE); // делаем так, чтобы освещались обе стороны полигона
-            Gl.glEnable(Gl.GL_NORMALIZE); //делам нормали одинаковой величины во избежание 
         }
 
         void InitL()
@@ -248,7 +259,15 @@ namespace BrainApp
             {
                 model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
                     (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+
+                string log = "";
+                log += "OpenGL version: " + Gl.glGetString(Gl.GL_VERSION) + "\r\n";
+                model.rayTracingGPU(ref log, ref space, ref size, ref spacing, p.x, p.y, p.z,
+                    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+                tbLog.Text += log.Replace("\n", "\r\n");
             }
+            InitProjection();
+
             if (cbCR.Checked)
             {
                 model.verticalSmoothing((int)Int32.Parse(tbCRRange.Text), Double.Parse(tbCRSpeed.Text));
@@ -258,6 +277,17 @@ namespace BrainApp
                 model.smoothing(Double.Parse(tbGradThr.Text));
             }
             RedrawGl();
+        }
+
+        private Mode getMode()
+        {
+            switch (tabControl1.SelectedIndex)
+            {
+                case 0: return Mode.Model;
+                case 1: return Mode.Chart;
+            }
+
+            return Mode.Model;
         }
 
         private void btnBuld_Click(object sender, EventArgs e)
@@ -417,6 +447,7 @@ namespace BrainApp
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 dataFile = dialog.FileName;
+                LoadData();
             }
         }
 
@@ -601,14 +632,10 @@ namespace BrainApp
 
         private void mainToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            panelChart.Visible = false;
-            plottingToolStripMenuItem.CheckState = CheckState.Unchecked;
         }
 
         private void plottingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            panelChart.Visible = true;
-            mainToolStripMenuItem.CheckState = CheckState.Unchecked;
         }
 
         int chartPivotX, chartPivotY;
@@ -627,7 +654,7 @@ namespace BrainApp
             {
                 return;
             }
-            if (!plottingToolStripMenuItem.Checked)
+            if (!getMode().Equals(Mode.Chart))
             {
                 return;
             }            

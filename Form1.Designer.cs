@@ -69,9 +69,6 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optioanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.plottingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cbCR = new System.Windows.Forms.CheckBox();
             this.cbGrad = new System.Windows.Forms.CheckBox();
             this.tbGradThr = new System.Windows.Forms.TextBox();
@@ -83,8 +80,13 @@
             this.txtChartMax = new System.Windows.Forms.TextBox();
             this.txtChartMin = new System.Windows.Forms.TextBox();
             this.panelChart = new System.Windows.Forms.Panel();
-            this.btnHist = new System.Windows.Forms.Button();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.btnHist = new System.Windows.Forms.Button();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tbLog = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinVal)).BeginInit();
@@ -95,6 +97,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.panelChart.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // AnT
@@ -110,10 +116,9 @@
             this.AnT.ColorBits = ((byte)(32));
             this.AnT.DepthBits = ((byte)(16));
             this.AnT.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.AnT.Location = new System.Drawing.Point(18, 0);
-            this.AnT.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AnT.Location = new System.Drawing.Point(0, 0);
             this.AnT.Name = "AnT";
-            this.AnT.Size = new System.Drawing.Size(640, 656);
+            this.AnT.Size = new System.Drawing.Size(428, 428);
             this.AnT.StencilBits = ((byte)(0));
             this.AnT.TabIndex = 0;
             this.AnT.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AnT_MouseClick);
@@ -123,10 +128,9 @@
             // 
             // btnBuld
             // 
-            this.btnBuld.Location = new System.Drawing.Point(548, 717);
-            this.btnBuld.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnBuld.Location = new System.Drawing.Point(365, 488);
             this.btnBuld.Name = "btnBuld";
-            this.btnBuld.Size = new System.Drawing.Size(112, 35);
+            this.btnBuld.Size = new System.Drawing.Size(75, 23);
             this.btnBuld.TabIndex = 2;
             this.btnBuld.Text = "Build";
             this.btnBuld.UseVisualStyleBackColor = true;
@@ -134,10 +138,9 @@
             // 
             // btnLoad
             // 
-            this.btnLoad.Location = new System.Drawing.Point(548, 672);
-            this.btnLoad.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnLoad.Location = new System.Drawing.Point(365, 459);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(112, 35);
+            this.btnLoad.Size = new System.Drawing.Size(75, 23);
             this.btnLoad.TabIndex = 3;
             this.btnLoad.Text = "Load";
             this.btnLoad.UseVisualStyleBackColor = true;
@@ -148,10 +151,9 @@
             this.pictureBox1.BackColor = System.Drawing.SystemColors.Window;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pictureBox1.ContextMenuStrip = this.contextMenuStrip1;
-            this.pictureBox1.Location = new System.Drawing.Point(669, 42);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pictureBox1.Location = new System.Drawing.Point(446, 27);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(766, 786);
+            this.pictureBox1.Size = new System.Drawing.Size(512, 512);
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
@@ -167,28 +169,27 @@
             this.viewThrowThresholdToolStripMenuItem,
             this.showGradientToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(278, 64);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(203, 48);
             // 
             // viewThrowThresholdToolStripMenuItem
             // 
             this.viewThrowThresholdToolStripMenuItem.Name = "viewThrowThresholdToolStripMenuItem";
-            this.viewThrowThresholdToolStripMenuItem.Size = new System.Drawing.Size(277, 30);
+            this.viewThrowThresholdToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.viewThrowThresholdToolStripMenuItem.Text = "Show through threshold";
             this.viewThrowThresholdToolStripMenuItem.Click += new System.EventHandler(this.viewThrowThresholdToolStripMenuItem_Click);
             // 
             // showGradientToolStripMenuItem
             // 
             this.showGradientToolStripMenuItem.Name = "showGradientToolStripMenuItem";
-            this.showGradientToolStripMenuItem.Size = new System.Drawing.Size(277, 30);
+            this.showGradientToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.showGradientToolStripMenuItem.Text = "Show gradient";
             this.showGradientToolStripMenuItem.Click += new System.EventHandler(this.showGradientToolStripMenuItem_Click);
             // 
             // tbMinVal
             // 
-            this.tbMinVal.Location = new System.Drawing.Point(342, -2);
-            this.tbMinVal.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbMinVal.Location = new System.Drawing.Point(228, -1);
             this.tbMinVal.Name = "tbMinVal";
-            this.tbMinVal.Size = new System.Drawing.Size(156, 69);
+            this.tbMinVal.Size = new System.Drawing.Size(104, 45);
             this.tbMinVal.TabIndex = 5;
             this.tbMinVal.Scroll += new System.EventHandler(this.tbMinVal_Scroll);
             // 
@@ -206,135 +207,121 @@
             this.panel1.Controls.Add(this.lblX);
             this.panel1.Controls.Add(this.tbSliceNum);
             this.panel1.Controls.Add(this.tbMinVal);
-            this.panel1.Location = new System.Drawing.Point(0, 865);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.panel1.Location = new System.Drawing.Point(0, 580);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1457, 47);
+            this.panel1.Size = new System.Drawing.Size(972, 31);
             this.panel1.TabIndex = 6;
             // 
             // lblVal
             // 
             this.lblVal.AutoSize = true;
-            this.lblVal.Location = new System.Drawing.Point(1394, 12);
-            this.lblVal.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblVal.Location = new System.Drawing.Point(929, 8);
             this.lblVal.Name = "lblVal";
-            this.lblVal.Size = new System.Drawing.Size(18, 20);
+            this.lblVal.Size = new System.Drawing.Size(13, 13);
             this.lblVal.TabIndex = 14;
             this.lblVal.Text = "0";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1358, 12);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(905, 8);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(36, 20);
+            this.label4.Size = new System.Drawing.Size(25, 13);
             this.label4.TabIndex = 13;
             this.label4.Text = "Val:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(1298, 12);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(865, 8);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(23, 20);
+            this.label3.Size = new System.Drawing.Size(17, 13);
             this.label3.TabIndex = 12;
             this.label3.Text = "Z:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1244, 12);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(829, 8);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(24, 20);
+            this.label2.Size = new System.Drawing.Size(17, 13);
             this.label2.TabIndex = 11;
             this.label2.Text = "Y:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1178, 12);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(785, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(24, 20);
+            this.label1.Size = new System.Drawing.Size(17, 13);
             this.label1.TabIndex = 10;
             this.label1.Text = "X:";
             // 
             // lblZ
             // 
             this.lblZ.AutoSize = true;
-            this.lblZ.Location = new System.Drawing.Point(1320, 12);
-            this.lblZ.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblZ.Location = new System.Drawing.Point(880, 8);
             this.lblZ.Name = "lblZ";
-            this.lblZ.Size = new System.Drawing.Size(18, 20);
+            this.lblZ.Size = new System.Drawing.Size(13, 13);
             this.lblZ.TabIndex = 9;
             this.lblZ.Text = "0";
             // 
             // lblY
             // 
             this.lblY.AutoSize = true;
-            this.lblY.Location = new System.Drawing.Point(1264, 12);
-            this.lblY.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblY.Location = new System.Drawing.Point(843, 8);
             this.lblY.Name = "lblY";
-            this.lblY.Size = new System.Drawing.Size(18, 20);
+            this.lblY.Size = new System.Drawing.Size(13, 13);
             this.lblY.TabIndex = 8;
             this.lblY.Text = "0";
             // 
             // lblX
             // 
             this.lblX.AutoSize = true;
-            this.lblX.Location = new System.Drawing.Point(1202, 12);
-            this.lblX.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblX.Location = new System.Drawing.Point(801, 8);
             this.lblX.Name = "lblX";
-            this.lblX.Size = new System.Drawing.Size(18, 20);
+            this.lblX.Size = new System.Drawing.Size(13, 13);
             this.lblX.TabIndex = 7;
             this.lblX.Text = "0";
             // 
             // tbSliceNum
             // 
-            this.tbSliceNum.Location = new System.Drawing.Point(4, -2);
-            this.tbSliceNum.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbSliceNum.Location = new System.Drawing.Point(3, -1);
             this.tbSliceNum.Name = "tbSliceNum";
-            this.tbSliceNum.Size = new System.Drawing.Size(346, 69);
+            this.tbSliceNum.Size = new System.Drawing.Size(231, 45);
             this.tbSliceNum.TabIndex = 6;
             this.tbSliceNum.Scroll += new System.EventHandler(this.tbSliceNum_Scroll);
             // 
             // tbRayNum1
             // 
-            this.tbRayNum1.Location = new System.Drawing.Point(63, 672);
-            this.tbRayNum1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbRayNum1.Location = new System.Drawing.Point(42, 459);
             this.tbRayNum1.Name = "tbRayNum1";
-            this.tbRayNum1.Size = new System.Drawing.Size(48, 26);
+            this.tbRayNum1.Size = new System.Drawing.Size(33, 20);
             this.tbRayNum1.TabIndex = 7;
             this.tbRayNum1.Text = "200";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 677);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(11, 462);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(45, 20);
+            this.label5.Size = new System.Drawing.Size(31, 13);
             this.label5.TabIndex = 8;
             this.label5.Text = "Rays";
             // 
             // tbRayNum2
             // 
-            this.tbRayNum2.Location = new System.Drawing.Point(122, 672);
-            this.tbRayNum2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbRayNum2.Location = new System.Drawing.Point(81, 459);
             this.tbRayNum2.Name = "tbRayNum2";
-            this.tbRayNum2.Size = new System.Drawing.Size(48, 26);
+            this.tbRayNum2.Size = new System.Drawing.Size(33, 20);
             this.tbRayNum2.TabIndex = 9;
             this.tbRayNum2.Text = "100";
             // 
             // tbCRSpeed
             // 
-            this.tbCRSpeed.Location = new System.Drawing.Point(184, 720);
-            this.tbCRSpeed.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbCRSpeed.Location = new System.Drawing.Point(123, 490);
             this.tbCRSpeed.Name = "tbCRSpeed";
-            this.tbCRSpeed.Size = new System.Drawing.Size(48, 26);
+            this.tbCRSpeed.Size = new System.Drawing.Size(33, 20);
             this.tbCRSpeed.TabIndex = 12;
             this.tbCRSpeed.Text = "1,1";
             this.tbCRSpeed.MouseHover += new System.EventHandler(this.tbCRRange_MouseHover);
@@ -342,29 +329,26 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(44, 726);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(29, 494);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 20);
+            this.label6.Size = new System.Drawing.Size(55, 13);
             this.label6.TabIndex = 11;
             this.label6.Text = "Check ray";
             // 
             // tbCRRange
             // 
-            this.tbCRRange.Location = new System.Drawing.Point(126, 720);
-            this.tbCRRange.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbCRRange.Location = new System.Drawing.Point(84, 490);
             this.tbCRRange.Name = "tbCRRange";
-            this.tbCRRange.Size = new System.Drawing.Size(48, 26);
+            this.tbCRRange.Size = new System.Drawing.Size(33, 20);
             this.tbCRRange.TabIndex = 10;
             this.tbCRRange.Text = "1";
             this.tbCRRange.MouseHover += new System.EventHandler(this.tbCRRange_MouseHover);
             // 
             // tbTODown
             // 
-            this.tbTODown.Location = new System.Drawing.Point(478, 665);
-            this.tbTODown.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbTODown.Location = new System.Drawing.Point(317, 459);
             this.tbTODown.Name = "tbTODown";
-            this.tbTODown.Size = new System.Drawing.Size(48, 26);
+            this.tbTODown.Size = new System.Drawing.Size(33, 20);
             this.tbTODown.TabIndex = 15;
             this.tbTODown.Text = "-100";
             this.tbTODown.MouseHover += new System.EventHandler(this.tbCRRange_MouseHover);
@@ -372,19 +356,17 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(238, 671);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(157, 463);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(71, 20);
+            this.label7.Size = new System.Drawing.Size(49, 13);
             this.label7.TabIndex = 14;
             this.label7.Text = "Ray type";
             // 
             // tbTOUp
             // 
-            this.tbTOUp.Location = new System.Drawing.Point(420, 665);
-            this.tbTOUp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbTOUp.Location = new System.Drawing.Point(278, 459);
             this.tbTOUp.Name = "tbTOUp";
-            this.tbTOUp.Size = new System.Drawing.Size(48, 26);
+            this.tbTOUp.Size = new System.Drawing.Size(33, 20);
             this.tbTOUp.TabIndex = 13;
             this.tbTOUp.Text = "500";
             this.tbTOUp.MouseHover += new System.EventHandler(this.tbCRRange_MouseHover);
@@ -393,12 +375,10 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.optionsToolStripMenuItem,
-            this.viewToolStripMenuItem});
+            this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(1458, 35);
+            this.menuStrip1.Size = new System.Drawing.Size(972, 24);
             this.menuStrip1.TabIndex = 16;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -409,25 +389,25 @@
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(50, 29);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(136, 30);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open..";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(133, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(136, 30);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -436,52 +416,24 @@
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.optioanToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(133, 29);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(93, 20);
             this.optionsToolStripMenuItem.Text = "Configuration";
             // 
             // optioanToolStripMenuItem
             // 
             this.optioanToolStripMenuItem.Name = "optioanToolStripMenuItem";
-            this.optioanToolStripMenuItem.Size = new System.Drawing.Size(148, 30);
+            this.optioanToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.optioanToolStripMenuItem.Text = "Options";
             this.optioanToolStripMenuItem.Click += new System.EventHandler(this.optioanToolStripMenuItem_Click);
-            // 
-            // viewToolStripMenuItem
-            // 
-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mainToolStripMenuItem,
-            this.plottingToolStripMenuItem});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(61, 29);
-            this.viewToolStripMenuItem.Text = "View";
-            // 
-            // mainToolStripMenuItem
-            // 
-            this.mainToolStripMenuItem.Checked = true;
-            this.mainToolStripMenuItem.CheckOnClick = true;
-            this.mainToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mainToolStripMenuItem.Name = "mainToolStripMenuItem";
-            this.mainToolStripMenuItem.Size = new System.Drawing.Size(205, 30);
-            this.mainToolStripMenuItem.Text = "3DVisualization";
-            this.mainToolStripMenuItem.Click += new System.EventHandler(this.mainToolStripMenuItem_Click);
-            // 
-            // plottingToolStripMenuItem
-            // 
-            this.plottingToolStripMenuItem.CheckOnClick = true;
-            this.plottingToolStripMenuItem.Name = "plottingToolStripMenuItem";
-            this.plottingToolStripMenuItem.Size = new System.Drawing.Size(205, 30);
-            this.plottingToolStripMenuItem.Text = "Chart";
-            this.plottingToolStripMenuItem.Click += new System.EventHandler(this.plottingToolStripMenuItem_Click);
             // 
             // cbCR
             // 
             this.cbCR.AutoSize = true;
             this.cbCR.Checked = true;
             this.cbCR.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbCR.Location = new System.Drawing.Point(18, 725);
-            this.cbCR.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.cbCR.Location = new System.Drawing.Point(12, 493);
             this.cbCR.Name = "cbCR";
-            this.cbCR.Size = new System.Drawing.Size(22, 21);
+            this.cbCR.Size = new System.Drawing.Size(15, 14);
             this.cbCR.TabIndex = 18;
             this.cbCR.UseVisualStyleBackColor = true;
             this.cbCR.CheckedChanged += new System.EventHandler(this.cbCR_CheckedChanged);
@@ -489,10 +441,9 @@
             // cbGrad
             // 
             this.cbGrad.AutoSize = true;
-            this.cbGrad.Location = new System.Drawing.Point(16, 763);
-            this.cbGrad.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.cbGrad.Location = new System.Drawing.Point(11, 518);
             this.cbGrad.Name = "cbGrad";
-            this.cbGrad.Size = new System.Drawing.Size(141, 24);
+            this.cbGrad.Size = new System.Drawing.Size(95, 17);
             this.cbGrad.TabIndex = 19;
             this.cbGrad.Text = "Grad threshold";
             this.cbGrad.UseVisualStyleBackColor = true;
@@ -500,19 +451,17 @@
             // 
             // tbGradThr
             // 
-            this.tbGradThr.Location = new System.Drawing.Point(152, 760);
-            this.tbGradThr.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbGradThr.Location = new System.Drawing.Point(101, 516);
             this.tbGradThr.Name = "tbGradThr";
-            this.tbGradThr.Size = new System.Drawing.Size(48, 26);
+            this.tbGradThr.Size = new System.Drawing.Size(33, 20);
             this.tbGradThr.TabIndex = 20;
             this.tbGradThr.Text = "30";
             // 
             // tbGradient
             // 
-            this.tbGradient.Location = new System.Drawing.Point(420, 694);
-            this.tbGradient.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbGradient.Location = new System.Drawing.Point(278, 478);
             this.tbGradient.Name = "tbGradient";
-            this.tbGradient.Size = new System.Drawing.Size(48, 26);
+            this.tbGradient.Size = new System.Drawing.Size(33, 20);
             this.tbGradient.TabIndex = 23;
             this.tbGradient.Text = "200";
             // 
@@ -520,10 +469,9 @@
             // 
             this.rbThreshold.AutoSize = true;
             this.rbThreshold.Checked = true;
-            this.rbThreshold.Location = new System.Drawing.Point(310, 671);
-            this.rbThreshold.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.rbThreshold.Location = new System.Drawing.Point(205, 463);
             this.rbThreshold.Name = "rbThreshold";
-            this.rbThreshold.Size = new System.Drawing.Size(104, 24);
+            this.rbThreshold.Size = new System.Drawing.Size(72, 17);
             this.rbThreshold.TabIndex = 24;
             this.rbThreshold.TabStop = true;
             this.rbThreshold.Text = "Threshold";
@@ -532,10 +480,9 @@
             // rbGrad
             // 
             this.rbGrad.AutoSize = true;
-            this.rbGrad.Location = new System.Drawing.Point(310, 695);
-            this.rbGrad.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.rbGrad.Location = new System.Drawing.Point(205, 479);
             this.rbGrad.Name = "rbGrad";
-            this.rbGrad.Size = new System.Drawing.Size(96, 24);
+            this.rbGrad.Size = new System.Drawing.Size(65, 17);
             this.rbGrad.TabIndex = 25;
             this.rbGrad.Text = "Gradient";
             this.rbGrad.UseVisualStyleBackColor = true;
@@ -559,11 +506,9 @@
             this.panelVisual.Controls.Add(this.tbRayNum1);
             this.panelVisual.Controls.Add(this.btnLoad);
             this.panelVisual.Controls.Add(this.btnBuld);
-            this.panelVisual.Controls.Add(this.AnT);
-            this.panelVisual.Location = new System.Drawing.Point(0, 43);
-            this.panelVisual.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.panelVisual.Location = new System.Drawing.Point(0, 28);
             this.panelVisual.Name = "panelVisual";
-            this.panelVisual.Size = new System.Drawing.Size(666, 814);
+            this.panelVisual.Size = new System.Drawing.Size(444, 546);
             this.panelVisual.TabIndex = 26;
             // 
             // chart1
@@ -572,34 +517,31 @@
             this.chart1.ChartAreas.Add(chartArea3);
             legend3.Name = "Legend1";
             this.chart1.Legends.Add(legend3);
-            this.chart1.Location = new System.Drawing.Point(4, -2);
-            this.chart1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chart1.Location = new System.Drawing.Point(3, -1);
             this.chart1.Name = "chart1";
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             series3.Legend = "Legend1";
             series3.Name = "Series1";
             this.chart1.Series.Add(series3);
-            this.chart1.Size = new System.Drawing.Size(639, 614);
+            this.chart1.Size = new System.Drawing.Size(426, 399);
             this.chart1.TabIndex = 26;
             this.chart1.Text = "chart";
             // 
             // txtChartMax
             // 
-            this.txtChartMax.Location = new System.Drawing.Point(75, 623);
-            this.txtChartMax.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtChartMax.Location = new System.Drawing.Point(50, 405);
             this.txtChartMax.Name = "txtChartMax";
-            this.txtChartMax.Size = new System.Drawing.Size(60, 26);
+            this.txtChartMax.Size = new System.Drawing.Size(41, 20);
             this.txtChartMax.TabIndex = 27;
             this.txtChartMax.Text = "200";
             this.txtChartMax.TextChanged += new System.EventHandler(this.txtChartMin_TextChanged);
             // 
             // txtChartMin
             // 
-            this.txtChartMin.Location = new System.Drawing.Point(6, 622);
-            this.txtChartMin.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.txtChartMin.Location = new System.Drawing.Point(4, 404);
             this.txtChartMin.Name = "txtChartMin";
-            this.txtChartMin.Size = new System.Drawing.Size(60, 26);
+            this.txtChartMin.Size = new System.Drawing.Size(41, 20);
             this.txtChartMin.TabIndex = 28;
             this.txtChartMin.Text = "-100";
             this.txtChartMin.TextChanged += new System.EventHandler(this.txtChartMin_TextChanged);
@@ -611,22 +553,10 @@
             this.panelChart.Controls.Add(this.txtChartMin);
             this.panelChart.Controls.Add(this.chart1);
             this.panelChart.Controls.Add(this.txtChartMax);
-            this.panelChart.Location = new System.Drawing.Point(8, 43);
-            this.panelChart.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.panelChart.Location = new System.Drawing.Point(1, 0);
             this.panelChart.Name = "panelChart";
-            this.panelChart.Size = new System.Drawing.Size(652, 658);
+            this.panelChart.Size = new System.Drawing.Size(435, 428);
             this.panelChart.TabIndex = 27;
-            this.panelChart.Visible = false;
-            // 
-            // btnHist
-            // 
-            this.btnHist.Location = new System.Drawing.Point(568, 625);
-            this.btnHist.Name = "btnHist";
-            this.btnHist.Size = new System.Drawing.Size(75, 33);
-            this.btnHist.TabIndex = 29;
-            this.btnHist.Text = "Hist";
-            this.btnHist.UseVisualStyleBackColor = true;
-            this.btnHist.Click += new System.EventHandler(this.btnHist_Click);
             // 
             // chart2
             // 
@@ -634,30 +564,92 @@
             this.chart2.ChartAreas.Add(chartArea4);
             legend4.Name = "Legend1";
             this.chart2.Legends.Add(legend4);
-            this.chart2.Location = new System.Drawing.Point(0, 5);
-            this.chart2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chart2.Location = new System.Drawing.Point(0, -1);
             this.chart2.Name = "chart2";
             series4.ChartArea = "ChartArea1";
             series4.Legend = "Legend1";
             series4.Name = "Series1";
             this.chart2.Series.Add(series4);
-            this.chart2.Size = new System.Drawing.Size(639, 614);
+            this.chart2.Size = new System.Drawing.Size(426, 399);
             this.chart2.TabIndex = 30;
             this.chart2.Text = "chart";
             this.chart2.Visible = false;
             // 
+            // btnHist
+            // 
+            this.btnHist.Location = new System.Drawing.Point(379, 406);
+            this.btnHist.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnHist.Name = "btnHist";
+            this.btnHist.Size = new System.Drawing.Size(50, 21);
+            this.btnHist.TabIndex = 29;
+            this.btnHist.Text = "Hist";
+            this.btnHist.UseVisualStyleBackColor = true;
+            this.btnHist.Click += new System.EventHandler(this.btnHist_Click);
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Location = new System.Drawing.Point(0, 27);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(444, 454);
+            this.tabControl1.TabIndex = 28;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.AnT);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(436, 428);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Model";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.panelChart);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(436, 428);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Chart";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.tbLog);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(436, 428);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Log";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // tbLog
+            // 
+            this.tbLog.Location = new System.Drawing.Point(0, 4);
+            this.tbLog.Multiline = true;
+            this.tbLog.Name = "tbLog";
+            this.tbLog.ReadOnly = true;
+            this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbLog.Size = new System.Drawing.Size(433, 421);
+            this.tbLog.TabIndex = 0;
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1458, 912);
+            this.ClientSize = new System.Drawing.Size(972, 611);
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.panelChart);
             this.Controls.Add(this.panelVisual);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Form1";
             this.Text = "Brainwork";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -675,6 +667,11 @@
             this.panelChart.ResumeLayout(false);
             this.panelChart.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -722,9 +719,6 @@
         private System.Windows.Forms.TextBox tbGradient;
         private System.Windows.Forms.RadioButton rbThreshold;
         private System.Windows.Forms.RadioButton rbGrad;
-        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mainToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem plottingToolStripMenuItem;
         private System.Windows.Forms.Panel panelVisual;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.TextBox txtChartMin;
@@ -732,6 +726,11 @@
         private System.Windows.Forms.Panel panelChart;
         private System.Windows.Forms.Button btnHist;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart2;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TextBox tbLog;
     }
 }
 
