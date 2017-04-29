@@ -457,7 +457,8 @@ namespace BrainApp
             Gl.glGenTextures(1, texture);                            // Create The Texture
 
             Gl.glBindTexture(Gl.GL_TEXTURE_3D, texture[0]);
-            Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, Gl.GL_DEPTH_COMPONENT, size[0], size[1], size[2], 0, Gl.GL_DEPTH_COMPONENT, Gl.GL_SHORT, space);
+            float[] ftmp = Array.ConvertAll<short, float>(space, item => (float)item);
+            Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, 33325, size[0], size[1], size[2], 0, Gl.GL_RED, Gl.GL_FLOAT, ftmp);
             Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
             Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
 
