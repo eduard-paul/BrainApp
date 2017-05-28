@@ -87,6 +87,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tbLog = new System.Windows.Forms.TextBox();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbMinVal)).BeginInit();
@@ -101,6 +102,7 @@
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // AnT
@@ -395,19 +397,19 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.openToolStripMenuItem.Text = "Open..";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(106, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -429,8 +431,6 @@
             // cbCR
             // 
             this.cbCR.AutoSize = true;
-            this.cbCR.Checked = true;
-            this.cbCR.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbCR.Location = new System.Drawing.Point(12, 493);
             this.cbCR.Name = "cbCR";
             this.cbCR.Size = new System.Drawing.Size(15, 14);
@@ -489,6 +489,7 @@
             // 
             // panelVisual
             // 
+            this.panelVisual.Controls.Add(this.trackBar1);
             this.panelVisual.Controls.Add(this.rbGrad);
             this.panelVisual.Controls.Add(this.rbThreshold);
             this.panelVisual.Controls.Add(this.tbGradThr);
@@ -578,7 +579,7 @@
             // btnHist
             // 
             this.btnHist.Location = new System.Drawing.Point(379, 406);
-            this.btnHist.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnHist.Margin = new System.Windows.Forms.Padding(2);
             this.btnHist.Name = "btnHist";
             this.btnHist.Size = new System.Drawing.Size(50, 21);
             this.btnHist.TabIndex = 29;
@@ -639,6 +640,17 @@
             this.tbLog.Size = new System.Drawing.Size(433, 421);
             this.tbLog.TabIndex = 0;
             // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(166, 502);
+            this.trackBar1.Maximum = 1000;
+            this.trackBar1.Minimum = -500;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(104, 45);
+            this.trackBar1.TabIndex = 26;
+            this.trackBar1.Value = 500;
+            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -672,6 +684,7 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -731,6 +744,7 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TextBox tbLog;
+        private System.Windows.Forms.TrackBar trackBar1;
     }
 }
 

@@ -58,6 +58,15 @@ namespace BrainApp
     class SectModel
     {
         public ArrayList v = new ArrayList();
+
+        public float[] vv;
+        public int rayNum_xy, rayNum_xz;
+        public void setRayNum(int rayNum_xy, int rayNum_xz)
+        {
+            this.rayNum_xy = rayNum_xy;
+            this.rayNum_xz = rayNum_xz;
+        }
+
         public AngleRange sect = new AngleRange();
         public double startX, startY, startZ;
         public void setCenter(double x, double y, double z)
@@ -177,7 +186,7 @@ namespace BrainApp
         }
 
         public void checkRay(ref ArrayList v, double X, double Y, double Z, ref AngleRange sect, double angle1, ref short[] space, ref int[] size, ref double[] spacing,
-    int param1 = 1, double param2 = 1.1)
+            int param1 = 1, double param2 = 1.1)
         {
             int rayNum = v.Count - 1;
             double param3 = (thresholdUp - thresholdDown) * 0.01;
@@ -204,8 +213,8 @@ namespace BrainApp
                     for (int j = 1; !(dist < tmpMax && dist > tmpMin) && dist > tmpMid * param2; j++)
                     {
                         //for (int j = 1; dist > distPrev*param2; j++) {
-                        
-                        p = rayHandler(ref ray, thresholdUp - j * param3, thresholdDown, gradient - j*gradient*0.01);
+
+                        p = rayHandler(ref ray, thresholdUp - j * param3, thresholdDown, gradient - j * gradient * 0.01);
                         dist = Math.Sqrt((p.x - X) * (p.x - X) + (p.y - Y) * (p.y - Y) + (p.z - Z) * (p.z - Z));
                     }
                     p.dist = dist;
@@ -223,6 +232,8 @@ namespace BrainApp
             spacing = _spacing;
             SectModel output = new SectModel();
             output.setCenter(startX, startY, startZ);
+
+            output.setRayNum(rayNum_xy, rayNum_xz);
 
             double angleStep1 = (output.sect.xy_end - output.sect.xy_start) / (rayNum_xy - 1);
             double angleStep2 = (output.sect.xz_end - output.sect.xz_start) / (rayNum_xz - 1);
@@ -246,6 +257,66 @@ namespace BrainApp
             });
             output.v.AddRange(outv);
             parts.Add(output);
+        }
+
+        public void rayTracing2(ref short[] _space, ref int[] _size, ref double[] _spacing,
+            double startX, double startY, double startZ, int rayNum_xy = 200, int rayNum_xz = 100)
+        {
+
+            SectModel output = new SectModel();
+            output.setCenter(startX, startY, startZ);
+
+            output.setRayNum(rayNum_xy, rayNum_xz);
+
+            float angleStep1 = (float) (output.sect.xy_end - output.sect.xy_start) / (rayNum_xy - 1);
+            float angleStep2 = (float) (output.sect.xz_end - output.sect.xz_start) / (rayNum_xz - 1);
+
+            float xy_start = (float) output.sect.xy_start;
+            float xz_start = (float)output.sect.xz_start;
+
+            // Устанавливаем переменные
+            renderProgram.SetUniformVector("Size", new Vector3D((float)size[0], (float)size[1], (float)size[2]));
+            renderProgram.SetUniformVector("Spacing", new Vector3D((float)spacing[0], (float)spacing[1], (float)spacing[2]));
+            renderProgram.SetUniformFloat("angleStep1", angleStep1);
+            renderProgram.SetUniformFloat("angleStep2", angleStep2);
+            renderProgram.SetUniformFloat("xy_start", xy_start);
+            renderProgram.SetUniformFloat("xz_start", xz_start);
+            renderProgram.SetUniformFloat("startX", (float) startX);
+            renderProgram.SetUniformInteger("thresholdUp", thresholdUp);
+            renderProgram.SetUniformInteger("thresholdDown", thresholdDown);
+            renderProgram.SetUniformFloat("gradient", (float)gradient);
+
+            Gl.glBegin(Gl.GL_QUADS);
+            Gl.glVertex3f(-1.0f, -1f, 0.0f);
+            Gl.glVertex3f(-1.0f, 1.0f, 0.0f);
+            Gl.glVertex3f(1.0f, 1.0f, 0.0f);
+            Gl.glVertex3f(1.0f, -1.0f, 0.0f);
+            Gl.glEnd();
+
+            int chan = 4;
+            output.vv = new float[chan * rayNum_xy * rayNum_xz];
+            Gl.glGetTexImage(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA, Gl.GL_FLOAT, output.vv);
+            //parts.Add(output);
+        }
+
+        public ArrayList fillRay2(double angle1, double angle2, double X, double Y, double Z)
+        {
+            double x1 = Math.Cos(angle1) * Math.Sin(angle2);
+            double y1 = Math.Sin(angle1) * Math.Sin(angle2);
+            double z1 = Math.Cos(angle2) * spacing[0] / spacing[2];
+            double max = Math.Max(Math.Abs(x1), Math.Max(Math.Abs(y1), Math.Abs(z1)));
+            x1 /= max; y1 /= max; z1 /= max;
+
+            ArrayList ray = new ArrayList();
+            double x = X, y = Y, z = Z;
+            while ((x < size[0] && x > 0) && (y < size[1] && y > 0) && (z < size[2] && z > 0))
+            {
+                Point3D p = new Point3D((int)x, (int)y, (int)z, space[(int)(z) * size[0] * size[1] + (int)(y) * size[0] + (int)(x)]);
+                ray.Add(p);
+                x += x1; y += y1; z += z1;
+            }
+
+            return ray;
         }
 
         public void verticalSmoothing(int crStep = 1, double crSpeed = 1.1)
@@ -352,29 +423,56 @@ namespace BrainApp
             });
         }
 
-
-        ShaderProgram renderProgram = null;
+        static ShaderProgram renderProgram = null;
         public void rayTracingGPU(ref string log, ref short[] _space, ref int[] _size, ref double[] _spacing,
-            double startX, double startY, double startZ, int rayNum_xy = 200, int rayNum_xz = 100)
+            double startX, double startY, double startZ, bool reloadSpace = false, int rayNum_xy = 200, int rayNum_xz = 100)
         {
-             rayNum_xy = 10;
-             rayNum_xz = 10;
+             //rayNum_xy = 5;
+             //rayNum_xz = 10;
 
             space = _space;
             size = _size;
             spacing = _spacing;
 
-            if (!InitShaders(ref log))
-            {
-                MessageBox.Show("Ошибка! Не удалось инициализировать шейдерную программу.");
-                return;
-            }
+            
+            //if (reloadSpace)
+            //{
+            //    loaded = false;
+            //    if (!InitShaders(ref log))
+            //    {
+            //        MessageBox.Show("Ошибка! Не удалось инициализировать шейдерную программу.");
+            //        //return;
+            //    }
+            //}
 
-            if (!LoadGLTextures(rayNum_xy, rayNum_xz))
+            long time;
+            if (!loaded)
             {
-                MessageBox.Show("Ошибка! Не удалось загрузить текстуры.");
-                return;
+                time = -System.DateTime.Now.Ticks;
+                loaded = true;
+                InitShaders(ref log);
+                if (!LoadGLTextures(rayNum_xy, rayNum_xz))
+                {
+                    MessageBox.Show("Ошибка! Не удалось загрузить текстуры.");
+                    return;
+                }
+                time += System.DateTime.Now.Ticks;
+                System.Console.WriteLine("time 1: " + time.ToString());
             }
+            else
+            {
+                time = -System.DateTime.Now.Ticks;
+                Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, FramebufferName[0]);
+                time += System.DateTime.Now.Ticks;
+                System.Console.WriteLine("time 2: " + time.ToString());
+            }
+            
+            // Записываем в переменные шейдеров значения по умолчанию			
+            //if (!SetShaderData())
+            //{
+            //    MessageBox.Show("Ошибка! Не удалось проинициализировать переменные.");
+            //    return;
+            //}
 
             // установка порта вывода в соответствии с размерами элемента anT 
             Gl.glViewport(0, 0, rayNum_xy, rayNum_xz);
@@ -391,6 +489,38 @@ namespace BrainApp
             // Устанавливаем программный объект в качестве текущего состояния OpenGL
             renderProgram.Bind();
 
+            ////////////////////////////////////////
+            SectModel output = new SectModel();
+            //SectModel output = (SectModel) parts[0];
+            output.setCenter(startX, startY, startZ);
+
+            output.setRayNum(rayNum_xy, rayNum_xz);
+
+            float angleStep1 = (float)(output.sect.xy_end - output.sect.xy_start) / (rayNum_xy - 1);
+            float angleStep2 = (float)(output.sect.xz_end - output.sect.xz_start) / (rayNum_xz - 1);
+
+            float xy_start = (float)output.sect.xy_start;
+            float xz_start = (float)output.sect.xz_start;
+
+            time = -System.DateTime.Now.Ticks;
+
+            // Устанавливаем переменные
+            renderProgram.SetUniformVector("Size", new Vector3D((float)size[0], (float)size[1], (float)size[2]));
+            renderProgram.SetUniformVector("Spacing", new Vector3D((float)spacing[0], (float)spacing[1], (float)spacing[2]));
+            renderProgram.SetUniformFloat("angleStep1", angleStep1);
+            renderProgram.SetUniformFloat("angleStep2", angleStep2);
+            renderProgram.SetUniformFloat("xy_start", xy_start);
+            renderProgram.SetUniformFloat("xz_start", xz_start);
+            renderProgram.SetUniformFloat("startX", (float)startX);
+            renderProgram.SetUniformFloat("startY", (float)startY);
+            renderProgram.SetUniformFloat("startZ", (float)startZ);
+            renderProgram.SetUniformInteger("thresholdUp", thresholdUp);
+            renderProgram.SetUniformInteger("thresholdDown", thresholdDown);
+            renderProgram.SetUniformFloat("gradient", (float)gradient);
+
+            time += System.DateTime.Now.Ticks;
+            System.Console.WriteLine("time 3: " + time.ToString());
+
             Gl.glBegin(Gl.GL_QUADS);
             Gl.glVertex3f(-1.0f, -1f, 0.0f);
             Gl.glVertex3f(-1.0f, 1.0f, 0.0f);
@@ -398,24 +528,39 @@ namespace BrainApp
             Gl.glVertex3f(1.0f, -1.0f, 0.0f);
             Gl.glEnd();
 
-            var pixels = new float[3 * rayNum_xy * rayNum_xz];
-            Gl.glGetTexImage(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB, Gl.GL_FLOAT, pixels);
+            int chan = 4;
+            output.vv = new float[chan * rayNum_xy * rayNum_xz];
+            Gl.glGetTexImage(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA, Gl.GL_FLOAT, output.vv);
+            parts.Add(output);
+            ////////////////////////////////////////
 
-            for (int i = 0; i < rayNum_xy; i++)
-            {
-                for (int j = 0; j < rayNum_xz; j++)
-                {
-                    System.Console.Write("(" + pixels[i * rayNum_xz * 3 + j * 3 + 0] + ", "
-                        + pixels[i * rayNum_xz * 3 + j * 3 + 1] + ", "
-                        + pixels[i * rayNum_xz * 3 + j * 3 + 2] + ") ");
-                }
-                System.Console.WriteLine();
-            }
+            //Gl.glBegin(Gl.GL_QUADS);
+            //Gl.glVertex3f(-1.0f, -1f, 0.0f);
+            //Gl.glVertex3f(-1.0f, 1.0f, 0.0f);
+            //Gl.glVertex3f(1.0f, 1.0f, 0.0f);
+            //Gl.glVertex3f(1.0f, -1.0f, 0.0f);
+            //Gl.glEnd();
+
+            //int chan = 4;
+            //var pixels = new float[chan * rayNum_xy * rayNum_xz];
+            //Gl.glGetTexImage(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA, Gl.GL_FLOAT, pixels);
+
+            //for (int i = 0; i < rayNum_xy; i++)
+            //{
+            //    for (int j = 0; j < rayNum_xz; j++)
+            //    {
+            //        System.Console.Write("(" + output.vv[i * rayNum_xz * chan + j * chan + 0] + ", "
+            //            + output.vv[i * rayNum_xz * chan + j * chan + 1] + ", "
+            //            + output.vv[i * rayNum_xz * chan + j * chan + 2] + ", "
+            //            + output.vv[i * rayNum_xz * chan + j * chan + 3] + ") ");
+            //    }
+            //    System.Console.WriteLine();
+            //}
 
             finilize();
         }
 
-        private bool InitShaders(ref string log)
+        static public bool InitShaders(ref string log)
         {
             // Результат загрузки шейдеров
             bool result = true;
@@ -442,38 +587,39 @@ namespace BrainApp
                 log += renderProgram.Log;
             }
 
-            // Записываем в переменные шейдеров значения по умолчанию			
-            if (!SetShaderData())
-            {
-                result = false;
-            }
-
             return result;
         }
 
         private int[] texture = new int[1];
+        private static int[] FramebufferName;
+        static private bool loaded = false;
         private bool LoadGLTextures(int rayNum_xy, int rayNum_xz)
         {
-            Gl.glGenTextures(1, texture);                            // Create The Texture
+            //if (!loaded)
+            {
+                Gl.glGenTextures(1, texture);                            // Create The Texture
 
-            Gl.glBindTexture(Gl.GL_TEXTURE_3D, texture[0]);
-            float[] ftmp = Array.ConvertAll<short, float>(space, item => (float)item);
-            Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, 33325, size[0], size[1], size[2], 0, Gl.GL_RED, Gl.GL_FLOAT, ftmp);
-            Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
-            Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+                Gl.glBindTexture(Gl.GL_TEXTURE_3D, texture[0]);
+                float[] ftmp = Array.ConvertAll<short, float>(space, item => (float)item);
+                Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, 33325, size[0], size[1], size[2], 0, Gl.GL_RED, Gl.GL_FLOAT, ftmp);
+                Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
+                Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
+
+                loaded = true;
+            }
 
             /*
              * Here we are starting to initiate rendering to texture 
              */
 
-            int[] FramebufferName = new int[1];
+            FramebufferName = new int[1];
             Gl.glGenFramebuffersEXT(1, FramebufferName);
             Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, FramebufferName[0]);
 
             int[] renderedTexture = new int[1];
             Gl.glGenTextures(1, renderedTexture);
             Gl.glBindTexture(Gl.GL_TEXTURE_2D, renderedTexture[0]);
-            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGB_FLOAT32_ATI, rayNum_xy, rayNum_xz, 0, Gl.GL_RGB, Gl.GL_FLOAT, 0);
+            Gl.glTexImage2D(Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA_FLOAT32_ATI, rayNum_xy, rayNum_xz, 0, Gl.GL_RGBA, Gl.GL_FLOAT, 0);
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_NEAREST);
             Gl.glTexParameteri(Gl.GL_TEXTURE_2D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_NEAREST);
 

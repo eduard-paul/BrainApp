@@ -120,13 +120,12 @@ namespace BrainApp
             InitL();
 
             const float height = 0; //Высота персонажа, тут нуль, дабы смещения не происходило.
-            //Glu.gluLookAt(x, y + height, z, x - Math.Sin(angleX / 180 * Math.PI),
-            //    y + height + (Math.Tan(angleY / 180 * Math.PI)), z - Math.Cos(angleX / 180 * Math.PI), 0, 1, 0);
+            
             Glu.gluLookAt(x, y + height, z, 10.3,10.3,-10.3, 0, 1, 0);
 
             for (int i = 0; i < model.parts.Count; i++)
             {
-                drawGl(((SectModel)model.parts[i]).v, size, spacing);
+                drawGl(((SectModel)model.parts[i]), size, spacing);
             }
 
 
@@ -136,29 +135,65 @@ namespace BrainApp
             AnT.Refresh();
         }
 
-        void drawGl(ArrayList model, int[] size, double[] spacing)
+        void drawGl(SectModel m, int[] size, double[] spacing)
         {
+            ArrayList model = m.v;
             int sizeXY = model.Count;
-            for (int j = 0; j < ((ArrayList)model[0]).Count - 1; j++)
+            for (int j = 0; j < m.rayNum_xz - 1; j++)
             {
-                for (int i = 0; i < model.Count - 1; i++)
+                for (int i = 0; i < m.rayNum_xy - 1; i++)
                 {
+                    float x1;
+                    float y1;
+                    float z1;
+                            
+                    float x2;
+                    float y2;
+                    float z2;
+                            
+                    float x3;
+                    float y3;
+                    float z3;
+                            
+                    float x4;
+                    float y4;
+                    float z4;
+                    if (m.vv==null)
+                    {
+                        x1 = (float)(((Point3D)((ArrayList)model[i])[j]).x * spacing[0] / 10);
+                        y1 = (float)(((Point3D)((ArrayList)model[i])[j]).y * spacing[1] / 10);
+                        z1 = (float)(((Point3D)((ArrayList)model[i])[j]).z * spacing[2] / 10);
 
-                    float x1 = (float)(((Point3D)((ArrayList)model[i])[j]).x * spacing[0] / 10);
-                    float y1 = (float)(((Point3D)((ArrayList)model[i])[j]).y * spacing[1] / 10);
-                    float z1 = (float)(((Point3D)((ArrayList)model[i])[j]).z * spacing[2] / 10);
+                        x2 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j + 1]).x * spacing[0] / 10);
+                        y2 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j + 1]).y * spacing[1] / 10);
+                        z2 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j + 1]).z * spacing[2] / 10);
 
-                    float x2 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j + 1]).x * spacing[0] / 10);
-                    float y2 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j + 1]).y * spacing[1] / 10);
-                    float z2 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j + 1]).z * spacing[2] / 10);
+                        x3 = (float)(((Point3D)((ArrayList)model[i])[j + 1]).x * spacing[0] / 10);
+                        y3 = (float)(((Point3D)((ArrayList)model[i])[j + 1]).y * spacing[1] / 10);
+                        z3 = (float)(((Point3D)((ArrayList)model[i])[j + 1]).z * spacing[2] / 10);
 
-                    float x3 = (float)(((Point3D)((ArrayList)model[i])[j + 1]).x * spacing[0] / 10);
-                    float y3 = (float)(((Point3D)((ArrayList)model[i])[j + 1]).y * spacing[1] / 10);
-                    float z3 = (float)(((Point3D)((ArrayList)model[i])[j + 1]).z * spacing[2] / 10);
+                        x4 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j]).x * spacing[0] / 10);
+                        y4 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j]).y * spacing[1] / 10);
+                        z4 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j]).z * spacing[2] / 10);
+                    }
+                    else
+                    {
+                        x1 = (float)(m.vv[j * m.rayNum_xy * 4 + i * 4 + 0] * spacing[0] / 10);
+                        y1 = (float)(m.vv[j * m.rayNum_xy * 4 + i * 4 + 1] * spacing[1] / 10);
+                        z1 = (float)(m.vv[j * m.rayNum_xy * 4 + i * 4 + 2] * spacing[2] / 10);
 
-                    float x4 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j]).x * spacing[0] / 10);
-                    float y4 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j]).y * spacing[1] / 10);
-                    float z4 = (float)(((Point3D)((ArrayList)model[(i + 1) % sizeXY])[j]).z * spacing[2] / 10);
+                        x2 = (float)(m.vv[((j + 1) % m.rayNum_xz) * m.rayNum_xy * 4 + (i + 1) * 4 + 0] * spacing[0] / 10);
+                        y2 = (float)(m.vv[((j + 1) % m.rayNum_xz) * m.rayNum_xy * 4 + (i + 1) * 4 + 1] * spacing[1] / 10);
+                        z2 = (float)(m.vv[((j + 1) % m.rayNum_xz) * m.rayNum_xy * 4 + (i + 1) * 4 + 2] * spacing[2] / 10);
+
+                        x3 = (float)(m.vv[j * m.rayNum_xy * 4 + (i + 1) * 4 + 0] * spacing[0] / 10);
+                        y3 = (float)(m.vv[j * m.rayNum_xy * 4 + (i + 1) * 4 + 1] * spacing[1] / 10);
+                        z3 = (float)(m.vv[j * m.rayNum_xy * 4 + (i + 1) * 4 + 2] * spacing[2] / 10);
+
+                        x4 = (float)(m.vv[((j + 1) % m.rayNum_xz) * m.rayNum_xy * 4 + i * 4 + 0] * spacing[0] / 10);
+                        y4 = (float)(m.vv[((j + 1) % m.rayNum_xz) * m.rayNum_xy * 4 + i * 4 + 1] * spacing[1] / 10);
+                        z4 = (float)(m.vv[((j + 1) % m.rayNum_xz) * m.rayNum_xy * 4 + i * 4 + 2] * spacing[2] / 10);
+                    }
 
                     float n1x = x2 - x1;
                     float n1y = y2 - y1;
@@ -245,25 +280,40 @@ namespace BrainApp
 
         private void build()
         {
+            if (model == null)
+            {
+                string log = "";
+                log += "OpenGL version: " + Gl.glGetString(Gl.GL_VERSION) + "\r\n";
+                //Model.InitShaders(ref log);
+                tbLog.Text += log.Replace("\n", "\r\n");
+            }
+
             model = new Model();
             model.thresholdUp = Int32.Parse(tbTOUp.Text);
             model.thresholdDown = Int32.Parse(tbTODown.Text);
+
+            model.thresholdUp = trackBar1.Value;
 
             model.rayType = rbThreshold.Checked ? 0 : 1;
             if (rbGrad.Checked)
             {
                 model.gradient = Double.Parse(tbGradient.Text);
             }
-
+            
             foreach (Point3D p in rayCenters)
             {
-                model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
-                    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+                long time = -System.DateTime.Now.Ticks;
+                //model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
+                //    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+                time += System.DateTime.Now.Ticks;
+                System.Console.WriteLine("time cpu: "+time.ToString());
 
                 string log = "";
-                log += "OpenGL version: " + Gl.glGetString(Gl.GL_VERSION) + "\r\n";
+                time = -System.DateTime.Now.Ticks;
                 model.rayTracingGPU(ref log, ref space, ref size, ref spacing, p.x, p.y, p.z,
-                    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+                    true, (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+                time += System.DateTime.Now.Ticks;
+                System.Console.WriteLine("time gpu: " + time.ToString());
                 tbLog.Text += log.Replace("\n", "\r\n");
             }
             InitProjection();
@@ -724,6 +774,11 @@ namespace BrainApp
             chart2.BorderColor = Color.Black;
             for (int s = 0; s < hist.Length; s++)
                 chart2.Series["Series1"].Points.AddXY(s + model.histMin, hist[s]);
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+            build();
         }
     }
 }
