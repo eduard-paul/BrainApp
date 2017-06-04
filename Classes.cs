@@ -19,9 +19,13 @@ namespace BrainApp
     class Point3D
     {
         public short val;
-        public int x, y, z;
+        public float x, y, z;
         public double dist;
         public Point3D(int _x, int _y, int _z, short _val = 0, double _dist=0)
+        {
+            x = _x; y = _y; z = _z; val = _val; dist = _dist;
+        }
+        public Point3D(float _x, float _y, float _z, short _val = 0, double _dist = 0)
         {
             x = _x; y = _y; z = _z; val = _val; dist = _dist;
         }
@@ -36,6 +40,40 @@ namespace BrainApp
             x = Int32.Parse(s1[0]);
             y = Int32.Parse(s1[1]);
             z = Int32.Parse(s1[2]);
+        }
+
+        public static Point3D operator +(Point3D p1, Point3D p2)
+        {
+            return new Point3D(p1.x+p2.x,p1.y+p2.y, p1.z+p2.z, p1.val, p1.dist);
+        }
+
+        public static Point3D operator *(float k, Point3D p)
+        {
+            return new Point3D(p.x * k, p.y * k, p.z * k, p.val, p.dist);
+        }
+
+        public static Point3D operator *(Point3D p, float k)
+        {
+            return k * p;
+        }
+
+        public static Point3D operator /(Point3D p, float k)
+        {
+            return p * (1f/k);
+        }
+
+        public Point3D Copy()
+        {
+            return new Point3D(x, y, z, val, dist);
+        }
+
+        public Point3D Add(Point3D p)
+        {
+            x += p.x;
+            y += p.y;
+            z += p.z;
+
+            return this;
         }
     };
 

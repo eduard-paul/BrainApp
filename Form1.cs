@@ -138,6 +138,90 @@ namespace BrainApp
 
         void drawGl(ArrayList model, int[] size, double[] spacing)
         {
+            if (mesh != null)
+            {
+                for (int i = 0; i < meshHeight - 1; i++)
+                {
+                    for (int j = 0; j < meshWidth - 1; j++)
+                    {
+                        float x1 = mesh[i * meshWidth + j].x;
+                        float y1 = mesh[i * meshWidth + j].y;
+                        float z1 = mesh[i * meshWidth + j].z;
+
+                        float x2 = mesh[((i + 1)) * meshWidth + j + 1].x;
+                        float y2 = mesh[((i + 1)) * meshWidth + j + 1].y;
+                        float z2 = mesh[((i + 1)) * meshWidth + j + 1].z;
+
+                        float x3 = mesh[i * meshWidth + j + 1].x;
+                        float y3 = mesh[i * meshWidth + j + 1].y;
+                        float z3 = mesh[i * meshWidth + j + 1].z;
+
+                        float x4 = mesh[((i + 1)) * meshWidth + j].x;
+                        float y4 = mesh[((i + 1)) * meshWidth + j].y;
+                        float z4 = mesh[((i + 1)) * meshWidth + j].z;
+
+                        Gl.glNormal3f(normArray[i * meshWidth * 2 + j * 2].x,
+                            normArray[i * meshWidth * 2 + j * 2].y,
+                            normArray[i * meshWidth * 2 + j * 2].z);
+
+                        Gl.glBegin(Gl.GL_TRIANGLES);
+                        Gl.glVertex3f(x1, z1, -y1);  // Вверх
+                        Gl.glVertex3f(x2, z2, -y2);  // Слева снизу
+                        Gl.glVertex3f(x3, z3, -y3);  // Справа снизу
+                        Gl.glEnd();
+
+                        Gl.glNormal3f(normArray[i * meshWidth * 2 + j * 2 + 1].x,
+                            normArray[i * meshWidth * 2 + j * 2 + 1].y,
+                            normArray[i * meshWidth * 2 + j * 2 + 1].z);
+
+                        Gl.glBegin(Gl.GL_TRIANGLES);
+                        Gl.glVertex3f(x1, z1, -y1);  // Вверх
+                        Gl.glVertex3f(x2, z2, -y2);  // Слева снизу
+                        Gl.glVertex3f(x4, z4, -y4);  // Справа снизу
+                        Gl.glEnd();
+                    }
+                    {
+                        float x1 = mesh[i * meshWidth + meshWidth - 1].x;
+                        float y1 = mesh[i * meshWidth + meshWidth - 1].y;
+                        float z1 = mesh[i * meshWidth + meshWidth - 1].z;
+
+                        float x2 = mesh[((i + 1)) * meshWidth].x;
+                        float y2 = mesh[((i + 1)) * meshWidth].y;
+                        float z2 = mesh[((i + 1)) * meshWidth].z;
+
+                        float x3 = mesh[i * meshWidth].x;
+                        float y3 = mesh[i * meshWidth].y;
+                        float z3 = mesh[i * meshWidth].z;
+
+                        float x4 = mesh[((i + 1)) * meshWidth + meshWidth - 1].x;
+                        float y4 = mesh[((i + 1)) * meshWidth + meshWidth - 1].y;
+                        float z4 = mesh[((i + 1)) * meshWidth + meshWidth - 1].z;
+
+                        Gl.glNormal3f(normArray[i * meshWidth * 2 + (meshWidth - 1) * 2].x,
+                            normArray[i * meshWidth * 2 + (meshWidth - 1) * 2].y,
+                            normArray[i * meshWidth * 2 + (meshWidth - 1) * 2].z);
+
+                        Gl.glBegin(Gl.GL_TRIANGLES);
+                        Gl.glVertex3f(x1, z1, -y1);  // Вверх
+                        Gl.glVertex3f(x2, z2, -y2);  // Слева снизу
+                        Gl.glVertex3f(x3, z3, -y3);  // Справа снизу
+                        Gl.glEnd();
+
+                        Gl.glNormal3f(normArray[i * meshWidth * 2 + (meshWidth - 1) * 2 + 1].x,
+                            normArray[i * meshWidth * 2 + (meshWidth - 1) * 2 + 1].y,
+                            normArray[i * meshWidth * 2 + (meshWidth - 1) * 2 + 1].z);
+
+                        Gl.glBegin(Gl.GL_TRIANGLES);
+                        Gl.glVertex3f(x1, z1, -y1);  // Вверх
+                        Gl.glVertex3f(x2, z2, -y2);  // Слева снизу
+                        Gl.glVertex3f(x4, z4, -y4);  // Справа снизу
+                        Gl.glEnd();
+                    }
+                }
+
+                return;
+            }
+
             int sizeXY = model.Count;
             for (int j = 0; j < ((ArrayList)model[0]).Count - 1; j++)
             {
@@ -245,6 +329,8 @@ namespace BrainApp
 
         private void build()
         {
+            mesh = null;
+
             model = new Model();
             model.thresholdUp = Int32.Parse(tbTOUp.Text);
             model.thresholdDown = Int32.Parse(tbTODown.Text);
@@ -260,11 +346,11 @@ namespace BrainApp
                 model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
                     (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
 
-                string log = "";
-                log += "OpenGL version: " + Gl.glGetString(Gl.GL_VERSION) + "\r\n";
-                model.rayTracingGPU(ref log, ref space, ref size, ref spacing, p.x, p.y, p.z,
-                    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
-                tbLog.Text += log.Replace("\n", "\r\n");
+                //string log = "";
+                //log += "OpenGL version: " + Gl.glGetString(Gl.GL_VERSION) + "\r\n";
+                //model.rayTracingGPU(ref log, ref space, ref size, ref spacing, p.x, p.y, p.z,
+                //    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+                //tbLog.Text += log.Replace("\n", "\r\n");
             }
             InitProjection();
 
@@ -520,7 +606,7 @@ namespace BrainApp
                         {
                             break;
                         }
-                        sliceImg.SetPixel(((Point3D)ray[k]).y, ((Point3D)ray[k]).x, Color.White);
+                        sliceImg.SetPixel((int)(((Point3D)ray[k]).y+0.5f), (int)(((Point3D)ray[k]).x+0.5f), Color.White);
                     }
                 }
             }
@@ -724,6 +810,137 @@ namespace BrainApp
             chart2.BorderColor = Color.Black;
             for (int s = 0; s < hist.Length; s++)
                 chart2.Series["Series1"].Points.AddXY(s + model.histMin, hist[s]);
+        }
+
+        private Point3D[] mesh;
+        private int meshHeight, meshWidth;
+        private Point3D[] normArray;
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (model == null)
+            {
+                return;
+            }
+
+            if (mesh == null)
+            {
+                meshHeight = ((ArrayList)((SectModel)model.parts[0]).v[0]).Count;
+                meshWidth = ((SectModel)model.parts[0]).v.Count;
+                mesh = new Point3D[meshHeight*meshWidth];
+                for (int i = 0; i < meshHeight; i++)
+                {
+                    for (int j = 0; j < meshWidth; j++)
+                    {
+                        mesh[i * meshWidth + j] = ((Point3D)((ArrayList)((SectModel)model.parts[0]).v[j])[i]);
+                        mesh[i * meshWidth + j].x *= (float) spacing[0] / 10;
+                        mesh[i * meshWidth + j].y *= (float) spacing[1] / 10;
+                        mesh[i * meshWidth + j].z *= (float) spacing[2] / 10;
+                    }
+                }
+            }
+
+            int newHeight = (meshHeight * 2) - 1;
+            int newWidth = meshWidth * 2;
+            Point3D[] newMesh = new Point3D[newWidth * newHeight];
+
+            // Fill the first & last rows
+            for (int j = 0; j < meshWidth; j++)
+            {
+                int jNext = (j + 1) == meshWidth ? 0 : j + 1;
+
+                newMesh[j * 2] = mesh[j].Copy();
+                newMesh[j * 2 + 1] = (mesh[j] + mesh[jNext]) / 2;
+
+                // new (bottom left)
+                newMesh[(1) * newWidth + j * 2] =
+                    (mesh[j] + mesh[(1) * meshWidth + j]) / 2;
+                // new (bottom right)
+                newMesh[(1) * newWidth + j * 2 + 1] =
+                    (mesh[j] + mesh[(1) * meshWidth + jNext]) / 2;
+
+                newMesh[(newHeight - 1) * newWidth + j * 2]
+                    = mesh[(meshHeight - 1) * meshWidth + j].Copy();
+                newMesh[(newHeight - 1) * newWidth + j * 2 + 1] =
+                    (mesh[j] + mesh[(meshHeight - 1) * meshWidth + jNext]) / 2;
+            }
+
+            //Fill the rest
+            for (int i = 1; i < meshHeight - 1; i++)
+            {
+                for (int j = 0; j < meshWidth; j++)
+                {
+                    int jNext = (j + 1) == meshWidth ? 0 : j + 1;
+                    int jPrev = j == 0 ? meshWidth - 1 : j - 1;
+
+                    //old vertex (top left)
+                    newMesh[i * 2 * newWidth + j * 2] =
+                        (mesh[i * meshWidth + j] * (10f / 16))
+                        + (mesh[(i - 1) * meshWidth + jPrev].Copy().Add(mesh[(i - 1) * meshWidth + j])
+                        .Add(mesh[i * meshWidth + jPrev]).Add(mesh[i * meshWidth + jNext])
+                        .Add(mesh[(i + 1) * meshWidth + j]).Add(mesh[(i + 1) * meshWidth + jNext])) / 16;
+                    // new (top right)
+                    newMesh[i * 2 * newWidth + j * 2 + 1] =
+                        (mesh[(i - 1) * meshWidth + j] + mesh[(i + 1) * meshWidth + jNext]) / 8
+                        + (mesh[i * meshWidth + j] + mesh[i * meshWidth + jNext]) * (3f / 8);
+                    // new (bottom left)
+                    newMesh[(i * 2 + 1) * newWidth + j * 2] =
+                        (mesh[i * meshWidth + jPrev] + mesh[(i + 1) * meshWidth + jNext]) / 8
+                        + (mesh[i * meshWidth + j] + mesh[(i + 1) * meshWidth + j]) * (3f / 8);
+                    // new (bottom right)
+                    newMesh[(i * 2 + 1) * newWidth + j * 2 + 1] =
+                        (mesh[i * meshWidth + jNext] + mesh[(i + 1) * meshWidth + j]) / 8
+                        + (mesh[i * meshWidth + j] + mesh[(i + 1) * meshWidth + jNext]) * (3f / 8);
+                }
+            }
+
+            mesh = newMesh;
+            meshWidth = newWidth;
+            meshHeight = newHeight;
+
+            normArray = new Point3D[meshWidth * meshHeight * 2];
+            for (int i = 0; i < meshHeight - 1; i++)
+            {
+                for (int j = 0; j < meshWidth; j++)
+                {
+                    int jNext = j == meshWidth - 1 ? 0 : j + 1;
+
+                    float x1 = mesh[i * meshWidth + j].x;
+                    float y1 = mesh[i * meshWidth + j].y;
+                    float z1 = mesh[i * meshWidth + j].z;
+
+                    float x2 = mesh[((i + 1)) * meshWidth + jNext].x;
+                    float y2 = mesh[((i + 1)) * meshWidth + jNext].y;
+                    float z2 = mesh[((i + 1)) * meshWidth + jNext].z;
+
+                    float x3 = mesh[i * meshWidth + jNext].x;
+                    float y3 = mesh[i * meshWidth + jNext].y;
+                    float z3 = mesh[i * meshWidth + jNext].z;
+
+                    float x4 = mesh[((i + 1)) * meshWidth + j].x;
+                    float y4 = mesh[((i + 1)) * meshWidth + j].y;
+                    float z4 = mesh[((i + 1)) * meshWidth + j].z;
+
+                    float n1x = x2 - x1;
+                    float n1y = y2 - y1;
+                    float n1z = z2 - z1;
+                    float n2x = x3 - x1;
+                    float n2y = y3 - y1;
+                    float n2z = z3 - z1;
+
+                    Point3D p1 = new Point3D((n1y * n2z - n1z * n2y), (n1z * n2x - n1x * n2z), (n1x * n2y - n1y * n2x));
+
+                    n2x = x4 - x1;
+                    n2y = y4 - y1;
+                    n2z = z4 - z1;
+                    Point3D p2 = new Point3D((n1y * n2z - n1z * n2y), (n1z * n2x - n1x * n2z), (n1x * n2y - n1y * n2x));
+
+                    normArray[i * meshWidth * 2 + j * 2] = p1;
+                    normArray[i * meshWidth * 2 + j * 2 + 1] = p2;
+                }
+            }
+
+
+            RedrawGl();
         }
     }
 }
