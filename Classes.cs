@@ -207,23 +207,39 @@ namespace BrainApp
                 {
                     //if (dist > distPrev*param2) {
                     double angle2 = sect.xz_start + i * angle2_step;
-                    ArrayList ray = fillRay(angle1, angle2, X, Y, Z);
 
-                    Point3D p = null;
-                    for (int j = 1; !(dist < tmpMax && dist > tmpMin) && dist > tmpMid * param2; j++)
-                    {
-                        //for (int j = 1; dist > distPrev*param2; j++) {
+                    //////////
+                    double x1 = Math.Cos(angle1) * Math.Sin(angle2);
+                    double y1 = Math.Sin(angle1) * Math.Sin(angle2);
+                    double z1 = Math.Cos(angle2) * spacing[0] / spacing[2];
+                    double norm = Math.Sqrt(x1*x1+y1*y1+z1*z1);
+                    x1 /= norm; y1 /= norm; z1 /= norm;
 
-                        p = rayHandler(ref ray, thresholdUp - j * param3, thresholdDown, gradient - j * gradient * 0.01);
-                        dist = Math.Sqrt((p.x - X) * (p.x - X) + (p.y - Y) * (p.y - Y) + (p.z - Z) * (p.z - Z));
-                    }
-                    p.dist = dist;
-                    v[i] = p;
+                    double x = X + x1 * tmpMid, y = Y + y1 * tmpMid, z = Z + z1 * tmpMid;
+
+                    Point3D p1 = new Point3D((int)x,(int)y,(int)z,0,tmpMid);
+                    v[i] = p1;
+
+                    ////////////
+
+                    //ArrayList ray = fillRay(angle1, angle2, X, Y, Z);
+
+                    //Point3D p = null;
+                    //for (int j = 1; !(dist < tmpMax && dist > tmpMin) && dist > tmpMid * param2; j++)
+                    //{
+                    //    //for (int j = 1; dist > distPrev*param2; j++) {
+
+                    //    p = rayHandler(ref ray, thresholdUp - j * param3, thresholdDown, gradient - j * gradient * 0.01);
+                    //    dist = Math.Sqrt((p.x - X) * (p.x - X) + (p.y - Y) * (p.y - Y) + (p.z - Z) * (p.z - Z));
+                    //}
+                    //p.dist = dist;
+                    //v[i] = p;
 
                 }
             }
         }
 
+        public int threadNum = 8;
         public void rayTracing(ref short[] _space, ref int[] _size, ref double[] _spacing,
             double startX, double startY, double startZ, int rayNum_xy = 200, int rayNum_xz = 100)
         {
@@ -240,7 +256,7 @@ namespace BrainApp
 
             output.v = new ArrayList(rayNum_xy);
             ArrayList[] outv = new ArrayList[rayNum_xy];
-            Parallel.For(0, rayNum_xy, i =>
+            Parallel.For(0, rayNum_xy, new ParallelOptions { MaxDegreeOfParallelism = threadNum }, i =>
             {
                 double angle1 = output.sect.xy_start + i * angleStep1;
                 double angle2 = output.sect.xz_start;
@@ -400,23 +416,37 @@ namespace BrainApp
                         if (g > gradThreshold)
                         {
                             double angle2 = sm.sect.xz_start + j * angleStep2;
-                            ArrayList ray = fillRay(angle1, angle2, sm.startX, sm.startY, sm.startZ);
 
-                            Point3D p = null;
-                            for (int k = 1; g > gradThreshold; k++)
-                            {
-                                p = rayHandler(ref ray, thresholdUp - k * param3, thresholdDown, gradient - k * gradient * 0.01);
-                                p.dist = Math.Sqrt((p.x - sm.startX) * (p.x - sm.startX)
-                                    + (p.y - sm.startY) * (p.y - sm.startY)
-                                    + (p.z - sm.startZ) * (p.z - sm.startZ));
-                                vv[j] = p;
+                            //////////
+                            double x1 = Math.Cos(angle1) * Math.Sin(angle2);
+                            double y1 = Math.Sin(angle1) * Math.Sin(angle2);
+                            double z1 = Math.Cos(angle2) * spacing[0] / spacing[2];
+                            double norm = Math.Sqrt(x1 * x1 + y1 * y1 + z1 * z1);
+                            x1 /= norm; y1 /= norm; z1 /= norm;
 
-                                g = grad(ref v, i, j, 1, ref mm);
-                            }
-                            if (g < 0)
-                            {
-                                (vv[j]) = mm;
-                            }
+                            double x = sm.startX + x1 * mm.dist, y = sm.startY + y1 * mm.dist, z = sm.startZ + z1 * mm.dist;
+
+                            Point3D p1 = new Point3D((int)x, (int)y, (int)z, 0, mm.dist);
+                            vv[j] = p1;
+                            ////////////
+
+                            //ArrayList ray = fillRay(angle1, angle2, sm.startX, sm.startY, sm.startZ);
+
+                            //Point3D p = null;
+                            //for (int k = 1; g > gradThreshold; k++)
+                            //{
+                            //    p = rayHandler(ref ray, thresholdUp - k * param3, thresholdDown, gradient - k * gradient * 0.01);
+                            //    p.dist = Math.Sqrt((p.x - sm.startX) * (p.x - sm.startX)
+                            //        + (p.y - sm.startY) * (p.y - sm.startY)
+                            //        + (p.z - sm.startZ) * (p.z - sm.startZ));
+                            //    vv[j] = p;
+
+                            //    g = grad(ref v, i, j, 1, ref mm);
+                            //}
+                            //if (g < 0)
+                            //{
+                            //    (vv[j]) = mm;
+                            //}
                         }
                     }
                 }
@@ -445,10 +475,8 @@ namespace BrainApp
             //    }
             //}
 
-            long time;
             if (!loaded)
             {
-                time = -System.DateTime.Now.Ticks;
                 loaded = true;
                 InitShaders(ref log);
                 if (!LoadGLTextures(rayNum_xy, rayNum_xz))
@@ -456,15 +484,10 @@ namespace BrainApp
                     MessageBox.Show("Ошибка! Не удалось загрузить текстуры.");
                     return;
                 }
-                time += System.DateTime.Now.Ticks;
-                System.Console.WriteLine("time 1: " + time.ToString());
             }
             else
             {
-                time = -System.DateTime.Now.Ticks;
                 Gl.glBindFramebufferEXT(Gl.GL_FRAMEBUFFER_EXT, FramebufferName[0]);
-                time += System.DateTime.Now.Ticks;
-                System.Console.WriteLine("time 2: " + time.ToString());
             }
             
             // Записываем в переменные шейдеров значения по умолчанию			
@@ -502,8 +525,6 @@ namespace BrainApp
             float xy_start = (float)output.sect.xy_start;
             float xz_start = (float)output.sect.xz_start;
 
-            time = -System.DateTime.Now.Ticks;
-
             // Устанавливаем переменные
             renderProgram.SetUniformVector("Size", new Vector3D((float)size[0], (float)size[1], (float)size[2]));
             renderProgram.SetUniformVector("Spacing", new Vector3D((float)spacing[0], (float)spacing[1], (float)spacing[2]));
@@ -517,9 +538,7 @@ namespace BrainApp
             renderProgram.SetUniformInteger("thresholdUp", thresholdUp);
             renderProgram.SetUniformInteger("thresholdDown", thresholdDown);
             renderProgram.SetUniformFloat("gradient", (float)gradient);
-
-            time += System.DateTime.Now.Ticks;
-            System.Console.WriteLine("time 3: " + time.ToString());
+            renderProgram.SetUniformInteger("gradMode", rayType);
 
             Gl.glBegin(Gl.GL_QUADS);
             Gl.glVertex3f(-1.0f, -1f, 0.0f);
@@ -602,6 +621,7 @@ namespace BrainApp
                 Gl.glBindTexture(Gl.GL_TEXTURE_3D, texture[0]);
                 float[] ftmp = Array.ConvertAll<short, float>(space, item => (float)item);
                 Gl.glTexImage3D(Gl.GL_TEXTURE_3D, 0, 33325, size[0], size[1], size[2], 0, Gl.GL_RED, Gl.GL_FLOAT, ftmp);
+                
                 Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MIN_FILTER, Gl.GL_LINEAR);
                 Gl.glTexParameteri(Gl.GL_TEXTURE_3D, Gl.GL_TEXTURE_MAG_FILTER, Gl.GL_LINEAR);
 

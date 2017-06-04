@@ -280,10 +280,13 @@ namespace BrainApp
 
         private void build()
         {
+            string log = "";
             if (model == null)
             {
-                string log = "";
                 log += "OpenGL version: " + Gl.glGetString(Gl.GL_VERSION) + "\r\n";
+                int[] maxTextureSize = new int[1];
+                Gl.glGetIntegerv(Gl.GL_MAX_TEXTURE_SIZE, maxTextureSize);
+                log += "Max texture size: " + maxTextureSize[0].ToString() + "\r\n";
                 //Model.InitShaders(ref log);
                 tbLog.Text += log.Replace("\n", "\r\n");
             }
@@ -298,34 +301,106 @@ namespace BrainApp
             if (rbGrad.Checked)
             {
                 model.gradient = Double.Parse(tbGradient.Text);
+                model.gradient = trackBar1.Value;
             }
-            
+
+            TimeSpan ts;
+            long time = -System.DateTime.Now.Ticks;
             foreach (Point3D p in rayCenters)
             {
-                long time = -System.DateTime.Now.Ticks;
-                //model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
-                //    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
-                time += System.DateTime.Now.Ticks;
-                System.Console.WriteLine("time cpu: "+time.ToString());
-
-                string log = "";
-                time = -System.DateTime.Now.Ticks;
-                model.rayTracingGPU(ref log, ref space, ref size, ref spacing, p.x, p.y, p.z,
-                    true, (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
-                time += System.DateTime.Now.Ticks;
-                System.Console.WriteLine("time gpu: " + time.ToString());
-                tbLog.Text += log.Replace("\n", "\r\n");
+                model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
+                    (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
             }
+            time += System.DateTime.Now.Ticks;
+            ts = TimeSpan.FromTicks(time);
+            System.Console.WriteLine("time cpu: " + ts.TotalMilliseconds);
+
+
+
+
+            /////////////////
+            //model.threadNum = 1;
+            //time = -System.DateTime.Now.Ticks;
+            //foreach (Point3D p in rayCenters)
+            //{
+            //    model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
+            //        (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+            //}
+            //time += System.DateTime.Now.Ticks;
+            //ts = TimeSpan.FromTicks(time);
+            //System.Console.WriteLine("time cpu 1t: " + ts.TotalMilliseconds);
+
+            //model.threadNum = 2;
+            //time = -System.DateTime.Now.Ticks;
+            //foreach (Point3D p in rayCenters)
+            //{
+            //    model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
+            //        (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+            //}
+            //time += System.DateTime.Now.Ticks;
+            //ts = TimeSpan.FromTicks(time);
+            //System.Console.WriteLine("time cpu 2t: " + ts.TotalMilliseconds);
+
+            //model.threadNum = 4;
+            //time = -System.DateTime.Now.Ticks;
+            //foreach (Point3D p in rayCenters)
+            //{
+            //    model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
+            //        (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+            //}
+            //time += System.DateTime.Now.Ticks;
+            //ts = TimeSpan.FromTicks(time);
+            //System.Console.WriteLine("time cpu 4t: " + ts.TotalMilliseconds);
+
+            //model.threadNum = 8;
+            //time = -System.DateTime.Now.Ticks;
+            //foreach (Point3D p in rayCenters)
+            //{
+            //    model.rayTracing(ref space, ref size, ref spacing, p.x, p.y, p.z,
+            //        (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+            //}
+            //time += System.DateTime.Now.Ticks;
+            //ts = TimeSpan.FromTicks(time);
+            //System.Console.WriteLine("time cpu 8t: " + ts.TotalMilliseconds);
+            /////////////////
+
+
+
+
+
+            log = "";
+            time = -System.DateTime.Now.Ticks;
+            foreach (Point3D p in rayCenters)
+            {
+                //model.rayTracingGPU(ref log, ref space, ref size, ref spacing, p.x, p.y, p.z,
+                //    true, (int)Int32.Parse(tbRayNum1.Text), (int)Int32.Parse(tbRayNum2.Text));
+            }
+            time += System.DateTime.Now.Ticks;
+            ts = TimeSpan.FromTicks(time);
+            System.Console.WriteLine("time gpu: " + ts.TotalMilliseconds);
+            tbLog.Text += log.Replace("\n", "\r\n");
+
+
             InitProjection();
 
+            time = -System.DateTime.Now.Ticks;
             if (cbCR.Checked)
             {
                 model.verticalSmoothing((int)Int32.Parse(tbCRRange.Text), Double.Parse(tbCRSpeed.Text));
             }
+            time += System.DateTime.Now.Ticks;
+            ts = TimeSpan.FromTicks(time);
+            System.Console.WriteLine("time verticalSmoothing: " + ts.TotalMilliseconds);
+
+            time = -System.DateTime.Now.Ticks;
             if (cbGrad.Checked)
             {
                 model.smoothing(Double.Parse(tbGradThr.Text));
             }
+            time += System.DateTime.Now.Ticks;
+            ts = TimeSpan.FromTicks(time);
+            System.Console.WriteLine("time grad: " + ts.TotalMilliseconds);
+
             RedrawGl();
         }
 

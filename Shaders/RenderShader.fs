@@ -15,6 +15,8 @@ uniform float startX;
 uniform float startY;
 uniform float startZ;
 
+uniform bool gradMode;
+
 uniform sampler3D tex;
 
 varying out vec4 color; //delete "varying" in order to run on intel
@@ -23,11 +25,6 @@ varying out vec4 color; //delete "varying" in order to run on intel
 
 void main(void)
 {
-//   color = vec4(gl_FragCoord[0] - 0.5, 
-//       gl_FragCoord[1] - 0.5, 
-//       texture(tex, vec3((gl_FragCoord[0] - 0.5) / 10, (gl_FragCoord[1] - 0.5) / 10, Size[2] / 2.0)).r, 
-//       12.3);
-
     float angle1 = xy_start + (gl_FragCoord[0] - 0.5) * angleStep1;
     float angle2 = xz_start + (gl_FragCoord[1] - 0.5) * angleStep2;
 
@@ -61,27 +58,54 @@ void main(void)
     float x = X, y = Y, z = Z;
     float value = texture(tex, vec3(x, y, z)).r;
 
-//    color = vec4(gl_FragCoord[0] - 0.5, gl_FragCoord[1] - 0.5, value, 0);
-//    return;
-
-    while ((x < 1 && x > 0) && (y < 1 && y > 0) && (z < 1 && z > 0))
+    if (gradMode == 0) 
     {
-        value = texture(tex, vec3(x + x1, y+y1, z+z1));
-        
-        if (value < thresholdDown || value > thresholdUp) 
+        while ((x < 1 && x > 0) && (y < 1 && y > 0) && (z < 1 && z > 0))
         {
-            x = x * Size[0]; 
-            y = y * Size[1]; 
-            z = z * Size[2];
-            float dist = sqrt((x - startX) * (x - startX) 
-                            + (y - startY) * (y - startY) 
-                            + (z - startZ) * (z - startZ));
-            color = vec4(x, y, z, dist);
+            value = texture(tex, vec3(x + x1, y+y1, z+z1));
+        
+            if (value < thresholdDown || value > thresholdUp) 
+            {
+                x = x * Size[0]; 
+                y = y * Size[1]; 
+                z = z * Size[2];
+                float dist = sqrt((x - startX) * (x - startX) 
+                                + (y - startY) * (y - startY) 
+                                + (z - startZ) * (z - startZ));
+                color = vec4(x, y, z, dist);
             
-            return;
-        }
+                return;
+            }
 
+            x = x + x1; y = y+y1; z = z+z1;
+        }
+    } else 
+    {
+        float value2 = 0, g = 0;
         x = x + x1; y = y+y1; z = z+z1;
+
+        while ((x + x1 < 1 && x + x1 > 0) && (y+y1 < 1 && y+y1 > 0) && (z+z1 < 1 && z+z1 > 0))
+        {
+            value = texture(tex, vec3(x + x1, y+y1, z+z1));
+            value2 = texture(tex, vec3(x - x1, y-y1, z-z1));
+
+            g = abs(2*value - 2*value2);
+        
+            if (g > gradient) 
+            {
+                x = x * Size[0]; 
+                y = y * Size[1]; 
+                z = z * Size[2];
+                float dist = sqrt((x - startX) * (x - startX) 
+                                + (y - startY) * (y - startY) 
+                                + (z - startZ) * (z - startZ));
+                color = vec4(x, y, z, dist);
+            
+                return;
+            }
+
+            x = x + x1; y = y+y1; z = z+z1;
+        }
     }
 
     x = (x - x1) * Size[0]; 
